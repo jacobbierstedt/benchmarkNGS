@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+#define DEFAULT_QUAL 73
 KSEQ_INIT(gzFile, gzread);
 
 class SeqRead {
@@ -13,32 +14,34 @@ public:
   std::string seq;
   std::string name;
   std::string qual;
-  SeqRead (){};
+  std::string comment;
+
+  SeqRead () {};
+  SeqRead (kseq_t * ks);
   virtual ~SeqRead(){};
+
+  std::string toFastq();
+  std::string toFasta();
 };
 
 
 class Reader{
 private:
   kseq_t * seq;
-  gzFile fp;
-  gzFile getfp(std::string);
+  gzFile   fp;
+  gzFile getfp(const std::string);
 
 public:
-  std::vector<std::string> seqNames;
-  std::vector<std::string> reads;
-  std::vector<std::string> quals;
-  std::vector<int>         seqls;
-  int nReads = 0;
+  std::vector<SeqRead>     reads;
+  std::vector<std::string> names;
+  int nReads;
 
   Reader() {};
-  Reader(std::string inputFile);
+  Reader(const std::string inputFile);
   virtual ~Reader();
 
   void readSequences();
   int iterSequences(SeqRead & read);
-  std::string toFastq();
-  std::string toFasta();
 };
 
 
