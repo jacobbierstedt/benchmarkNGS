@@ -8,9 +8,20 @@
 
 KSEQ_INIT(gzFile, gzread);
 
+class SeqRead {
+public:
+  std::string seq;
+  std::string name;
+  std::string qual;
+  SeqRead (){};
+  virtual ~SeqRead(){};
+};
+
 
 class Reader{
 private:
+  kseq_t * seq;
+  gzFile fp;
   gzFile getfp(std::string);
 
 public:
@@ -22,9 +33,10 @@ public:
 
   Reader() {};
   Reader(std::string inputFile);
-  virtual ~Reader(){};
+  virtual ~Reader();
 
-  void readSequences(gzFile fp);
+  void readSequences();
+  int iterSequences(SeqRead & read);
   std::string toFastq();
   std::string toFasta();
 };

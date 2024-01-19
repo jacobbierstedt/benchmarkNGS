@@ -1,13 +1,20 @@
 #include <iostream>
 #include "Reader.hpp"
 
+
 Reader::Reader(std::string inputFile) {
-  gzFile fp = getfp(inputFile);
-  readSequences(fp);
+  fp = getfp(inputFile);
+  seq = kseq_init(fp);
 }
 
+
+Reader::~Reader() {
+  kseq_destroy(seq);
+  gzclose(fp);
+}
+
+
 gzFile Reader::getfp(std::string input) {
-  gzFile fp;
   if( std::string("-").compare(input) == 0) {
     fp = gzdopen(STDIN_FILENO, "r");
   } else {
@@ -20,9 +27,9 @@ gzFile Reader::getfp(std::string input) {
   return fp;
 }
 
-void Reader::readSequences(gzFile fp) {
-  kseq_t * seq = kseq_init(fp);
-  while( kseq_read(seq) != -1){
+
+void Reader::readSequences() {
+  while (kseq_read(seq) != -1) {
     std::string qual;
     if (seq->qual.l != seq->seq.l) {
       qual = std::string(seq->seq.l, 73);
@@ -37,6 +44,20 @@ void Reader::readSequences(gzFile fp) {
   nReads++;
 }
 
+int Reader::iterSequences(SeqRead & read) {
+  int status = kseq_read(seq);
+  std::string qual;
+  if (seq->qual.l != seq->seq.l) {
+    qual = std::string(seq->seq.l, 73);
+  } else {
+    qual = std::string(seq->qual.s);
+  }
+  read.seq  = std::string(seq->seq.s);
+  read.name = std::string(seq->name.s);
+  read.qual = qual;
+  return status;
+}
+
 
 std::string Reader::toFastq() {
   std::string fq;
@@ -48,6 +69,7 @@ std::string Reader::toFastq() {
   }
   return fq;
 }
+
 
 std::string Reader::toFasta() {
   std::string fa;
