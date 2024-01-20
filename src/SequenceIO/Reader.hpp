@@ -15,11 +15,13 @@ public:
   std::string name;
   std::string qual;
   std::string comment;
+  bool        keep;
 
   SeqRead () {};
   SeqRead (kseq_t * ks);
   virtual ~SeqRead(){};
 
+  std::string toFastq(int & len);
   std::string toFastq();
   std::string toFasta();
 };

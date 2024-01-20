@@ -2,7 +2,9 @@
 #include "Reader.hpp"
 
 
-SeqRead::SeqRead(kseq_t * ks) {
+SeqRead::SeqRead(kseq_t * ks) :
+  keep(true)
+{
   seq  = std::string(ks->seq.s);
   name = std::string(ks->name.s);
   std::string kqual;
@@ -21,14 +23,21 @@ std::string SeqRead::toFasta() {
   return o;
 }
 
-std::string SeqRead::toFastq() {
+std::string SeqRead::toFastq(int & len) {
   std::string o;
   o += '@' + name + '\n';
   o += seq + '\n';
   o += "+\n";
   o += qual + '\n';
+  len = o.length();
   return o;
 }
+
+std::string SeqRead::toFastq() {
+  int x = 0;
+  return toFastq(x);
+}
+
 
 
 Reader::Reader(const std::string inputFile) {
