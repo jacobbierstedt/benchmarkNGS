@@ -15,6 +15,8 @@ INCLUDES = \
 
 CPP_FLAGS += $(INCLUDES)
 CXX_FLAGS += $(INCLUDES)
+CXX_FLAGS += $(OPTIMIZE_FLAGS)
+
 
 BUILD := build
 BIN := bin
@@ -27,12 +29,12 @@ all: trim_reads
 $(BUILD)/%.o: $(SRC)/%.cpp
 	@echo "$(CXX) $(CXX_FLAGS) -c $< -o $@"
 	@mkdir -p $(@D)
-	@$(CPP) $(CPP_FLAGS) -c $< -o $@
+	@$(CXX) $(CXX_FLAGS) -c $< -o $@
 
 $(BUILD)/%.o: $(APPS)/%.cpp
 	@echo "$(CXX) $(CXX_FLAGS) -c $< -o $@"
 	@mkdir -p $(@D)
-	@$(CPP) $(CPP_FLAGS) -c $< -o $@
+	@$(CXX) $(CXX_FLAGS) -c $< -o $@
 
 .PHONY: trim_reads
 trim_reads: $(BIN)/trim_reads
