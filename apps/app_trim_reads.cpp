@@ -14,6 +14,7 @@ static int trim5              = 0;
 static int minLen             = 0;
 static float minProp          = 0.0;
 static bool discardShorties   = false;
+static int compressLevel      = 1;
 static std::string inputFile  = "";
 static std::string outputFile = "";
 
@@ -27,15 +28,16 @@ void usage(int xc) {
   fprintf(stderr, "-l int      trim reads to overall length\n");
   fprintf(stderr, "-t int      bp to trim from right\n");
   fprintf(stderr, "-f int      bp to trim from left\n");
-  fprintf(stderr, "-m int      minimum length to trim reads to\n");
-  fprintf(stderr, "-p float    minimum proprotion of read to retain\n");
+  fprintf(stderr, "-m int      minimum length read length\n");
+  fprintf(stderr, "-p float    minimum proprotion of read to retain (Min: 0.0; Max: 1.0)\n");
   fprintf(stderr, "-d          discard reads that fail to meet length minimums\n");
+  fprintf(stderr, "-z int      zlib compression level for output fastq (Default: 1; Min: 0; Max: 9)\n");
   exit(xc);
 }
 
 void parse_command_line(int argc, char ** argv) {
   int c;
-  while ((c = getopt(argc, argv, "hl:t:f:m:p:di:o:")) != -1) {
+  while ((c = getopt(argc, argv, "hl:t:f:m:p:dz:i:o:")) != -1) {
     switch(c) {
       case 'h': usage(0);                              break;
       case 'l': readLength      = atoi(optarg);        break;
@@ -44,6 +46,7 @@ void parse_command_line(int argc, char ** argv) {
       case 'm': minLen          = atoi(optarg);        break;
       case 'p': minProp         = atof(optarg);        break;
       case 'd': discardShorties = true;                break;
+      case 'z': compressLevel   = atoi(optarg);        break;
       case 'i': inputFile       = std::string(optarg); break;
       case 'o': outputFile      = std::string(optarg); break;
       default: usage(1);                               break;
@@ -55,12 +58,18 @@ void parse_command_line(int argc, char ** argv) {
   if (outputFile.length() <= 2) {
     std::cerr << "Option -o requires a valid file path: " << outputFile << std::endl; exit(1);
   }
+  if (compressLevel > 9 || compressLevel < 0) {
+    std::cerr << "Option -z compression level must be between 0 and 9" << std::endl; exit(1);
+  }
 }
 
 void trimReads() {
   Trimmer trimmer  = Trimmer(readLength, trim3, trim5, minLen, minProp, discardShorties);
   Reader  seqs     = Reader(inputFile);
   gzFile  output   = gzopen(outputFile.c_str(), "w");
+
+  gzsetparams(output, compressLevel, Z_DEFAULT_STRATEGY);
+
   SeqRead read;
   while (seqs.iterSequences(read) != -1) {
     trimmer.trimRead(read);
