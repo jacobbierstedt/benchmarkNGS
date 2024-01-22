@@ -16,6 +16,17 @@ SeqRead::SeqRead(kseq_t * ks) :
   qual = kqual;
 }
 
+SeqRead::SeqRead(SeqRead & ref, int index, int length, int id) :
+  keep(true)
+{
+  if (index + length > ref.seq.length()) {
+    keep = false;
+  }
+  name = ref.name + "." + std::to_string(index) + "." + std::to_string(id);
+  seq  = ref.seq.substr(index, length);
+  qual = ref.qual.substr(index, length);
+}
+
 std::string SeqRead::toFasta() {
   std::string o;
   o += '>' + name + '\n';
@@ -72,9 +83,17 @@ void Reader::readSequences() {
   }
   nReads++;
 }
-
-int Reader::iterSequences(SeqRead & read) {
-  int status = kseq_read(seq);
+/* Return value:
+   >=0  length of the sequence (normal)
+   -1   end-of-file
+   -2   truncated quality string
+   -3   error reading stream
+ */
+int64_t Reader::iterSequences(SeqRead & read) {
+  int64_t status = kseq_read(seq);
+  if (status == -1) {
+    return status;
+  }
   SeqRead nread = SeqRead(seq);
   read = nread;
   return status;

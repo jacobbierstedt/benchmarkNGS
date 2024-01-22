@@ -17,8 +17,9 @@ public:
   std::string comment;
   bool        keep;
 
-  SeqRead () {};
-  SeqRead (kseq_t * ks);
+  SeqRead() {};
+  SeqRead(kseq_t * ks);
+  SeqRead(SeqRead & ref, int index, int length, int id);
   virtual ~SeqRead(){};
 
   std::string toFastq(int & len);
@@ -43,7 +44,7 @@ public:
   virtual ~Reader();
 
   void readSequences();
-  int iterSequences(SeqRead & read);
+  int64_t iterSequences(SeqRead & read);
 };
 
 
