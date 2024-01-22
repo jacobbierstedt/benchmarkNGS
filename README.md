@@ -9,3 +9,4 @@ Currently, the only available tool is a simple read trimmer... more to come.
 |Executable|Description|
 |---|---|
 |trim_reads|Performs a variety of trimming and filtering operations on a fastq/a file|
+|simulate|Simulate fastq reads from references|
