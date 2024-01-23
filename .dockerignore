@@ -1,0 +1,11 @@
+*.fastq
+*.fasta
+*.fastq.gz
+*.fasta.gz
+*.tgz
+dev.*
+bin/
+build/
+Dockerfile
+.gitignore
+.git
