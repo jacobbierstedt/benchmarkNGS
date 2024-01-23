@@ -31,7 +31,7 @@ void usage(int xc) {
 
 void parse_command_line(int argc, char ** argv) {
   int c;
-  while ((c = getopt(argc, argv, "hd:l:e:r:i:o:")) != -1) {
+  while ((c = getopt(argc, argv, "hd:l:e:z:r:i:o:")) != -1) {
     switch(c) {
       case 'h': usage(0);                              break;
       case 'd': depth         = atof(optarg);          break;
@@ -44,7 +44,7 @@ void parse_command_line(int argc, char ** argv) {
       default: usage(1);                               break;
     }
   }
-  if (inputFile.length() <= 2) {
+  if (inputFile.length() < 1) {
     std::cerr << "Option -i requires a valid file path: " << inputFile << std::endl; exit(1);
   }
   if (outputFile.length() <= 2) {
