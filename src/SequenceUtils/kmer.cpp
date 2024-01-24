@@ -1,6 +1,5 @@
 #include "kmer.hpp"
 
-
 static const uint8_t dna[] = {
   4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
   4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
@@ -57,5 +56,39 @@ void Kmer::getKmer(const std::string & seq) {
   for(int i = 0; i< seq.length(); i++) {
     mask <<= 2;
     mask |= dna[seq[i]];
+  }
+}
+
+KmerizeSequence::KmerizeSequence(const int kmerLength, const int minimizerLength)
+{
+  this->kmerLength      = kmerLength;
+  this->minimizerLength = minimizerLength;
+}
+
+void KmerizeSequence::getMinimizers(SeqRead & seq, MMap & mmap) {
+  if (seq.seq.length() <= kmerLength) {
+    return;
+  }
+  int i = 0;
+  while (i < seq.seq.length() - kmerLength + 1) {
+    std::string kstr = seq.seq.substr(i, kmerLength);
+    Minimizer mini(minimizerLength);
+    mini.getMinimizer(kstr);
+    mmap.emplace(mini.mask, i);
+    i++;
+  }
+}
+
+void KmerizeSequence::getMinimizers(SeqRead & seq, MSet & mset) {
+  if (seq.seq.length() <= kmerLength) {
+    return;
+  }
+  int i = 0;
+  while (i < seq.seq.length() - kmerLength + 1) {
+    std::string kstr = seq.seq.substr(i, kmerLength);
+    Minimizer mini(minimizerLength);
+    mini.getMinimizer(kstr);
+    mset.emplace(mini.mask);
+    i++;
   }
 }
