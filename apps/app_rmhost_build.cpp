@@ -63,7 +63,6 @@ void build_rmhost_db( ) {
     db.addDbSequence(ref);
   }
   db.writeDb(outputFile);
-  // db.readDb(outputFile);
 }
 
 

@@ -1,9 +1,11 @@
 #ifndef KMER_HPP
 #define KMER_HPP
 
+#include <iostream>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <algorithm>
 #include "Reader.hpp"
 
 #define DEFAULT_KMASK 0x0F

@@ -72,6 +72,14 @@ void KmerizeSequence::getMinimizers(SeqRead & seq, MMap & mmap) {
   int i = 0;
   while (i < seq.seq.length() - kmerLength + 1) {
     std::string kstr = seq.seq.substr(i, kmerLength);
+    int ambig = 0;
+    ambig += std::count(kstr.begin(), kstr.end(), 'N');
+    float ambigRatio = (float) ambig / (float) kstr.length();
+    if (ambigRatio > 0.2) {
+      i++;
+      continue;
+    }
+
     Minimizer mini(minimizerLength);
     mini.getMinimizer(kstr);
     mmap.emplace(mini.mask, i);
@@ -86,6 +94,12 @@ void KmerizeSequence::getMinimizers(SeqRead & seq, MSet & mset) {
   int i = 0;
   while (i < seq.seq.length() - kmerLength + 1) {
     std::string kstr = seq.seq.substr(i, kmerLength);
+    int ambig = 0;
+    ambig += std::count(kstr.begin(), kstr.end(), 'N');
+    float ambigRatio = (float) ambig / (float) kstr.length();
+    if (ambigRatio > 0.2) {
+      i++;
+    }
     Minimizer mini(minimizerLength);
     mini.getMinimizer(kstr);
     mset.emplace(mini.mask);

@@ -10,7 +10,6 @@ RmHostDb::RmHostDb(const int kmerLength, const int minimizerLength) {
 void RmHostDb::addDbSequence(SeqRead & seq) {
   // Get kmer map
   kmseq.getMinimizers(seq, mmap);
-  std::cout << mmap.size() << std::endl;
 
 }
 
